@@ -1,0 +1,299 @@
+
+====================================================================================================
+STAGE 0 / Q0 -- is g_hat informative about grad log(p/q) at t=0?
+    Pass (spec 9.1): cos exceeds the permutation null by > 3 permutation-s.d.
+    at D=2, eps=inf, N=100k, and increases monotonically in N.
+====================================================================================================
+      D   eps        N  vote SNR       cos (m5)      cos (m5b)        perm null       z  rand base
+      2  None     2000      2.00    0.523±0.039    0.517±0.035    0.019±0.045    11.2      0.564
+      2  None    20000      5.36    0.653±0.062    0.646±0.057    0.016±0.043    14.7      0.564
+      2  None   100000     11.78    0.669±0.051    0.670±0.055    0.017±0.044    14.8      0.564
+      2   1.0     2000      0.40    0.129±0.069    0.119±0.075   -0.001±0.045     2.9      0.564
+      2   1.0    20000      2.56    0.493±0.050    0.495±0.048    0.004±0.044    11.1      0.564
+      2   1.0   100000      8.74    0.644±0.047    0.645±0.052    0.011±0.044    14.4      0.564
+    128  None     2000     11.50    0.089±0.006    0.022±0.004    0.001±0.004    20.2      0.071
+    128  None    20000     34.54    0.093±0.004    0.023±0.003    0.001±0.004    21.3      0.071
+    128  None   100000     67.32    0.087±0.006    0.021±0.004    0.001±0.004    19.5      0.071
+    128   1.0     2000      2.30    0.083±0.008    0.021±0.004    0.001±0.004    18.9      0.071
+    128   1.0    20000     16.51    0.093±0.004    0.023±0.003    0.001±0.004    21.3      0.071
+    128   1.0   100000     49.92    0.087±0.006    0.021±0.004    0.001±0.004    19.5      0.071
+
+   D=2, eps=inf, N=100k:  cos=0.669, 14.8 permutation-s.d. above null
+   monotone in N: [0.5227719522557377, 0.6526942769475605, 0.6694095360275865] -> True
+   Q0 VERDICT: PASS
+
+========================================================================================================
+STAGE 1 -- HEALTH GATE (spec 9.0).  Blocking: nothing is read from a failing cell.
+========================================================================================================
+               cell                arm     FD_0      FD_T   h1   h2   h3   n_eff   h4  spread
+      A D=2 eps=1.0              blind     0.92      0.02   OK   OK   OK    0.51   OK    0.97
+      A D=2 eps=1.0  contrastive-gated     0.92      0.02   OK   OK   --    0.31   OK    0.98
+      A D=2 eps=1.0        random_pair     0.92      0.03   OK   OK   OK    0.53   OK    0.97
+      A D=2 eps=inf              blind     0.92      0.02   OK   OK   OK    0.54   OK    0.96
+      A D=2 eps=inf  contrastive-gated     0.92      0.03   OK   OK   --    0.27   OK    0.97
+      A D=2 eps=inf        random_pair     0.92      0.04   OK   OK   OK    0.56   OK    0.97
+      A D=8 eps=1.0              blind     4.40      0.51   OK   OK   OK    0.55   OK    0.87
+      A D=8 eps=1.0  contrastive-gated     4.40      0.42   OK   OK   --    0.29   OK    0.90
+      A D=8 eps=1.0        random_pair     4.40      0.50   OK   OK   OK    0.54   OK    0.87
+      A D=8 eps=inf              blind     4.40      0.51   OK   OK   OK    0.60   OK    0.86
+      A D=8 eps=inf  contrastive-gated     4.40      0.34   OK   OK   --    0.30   OK    0.91
+      A D=8 eps=inf        random_pair     4.40      0.52   OK   OK   OK    0.58   OK    0.87
+     A D=32 eps=1.0              blind    20.29     22.55   --   OK   OK    0.35   OK    1.04
+     A D=32 eps=1.0  contrastive-gated    20.29     18.65   --   OK   --    0.22   OK    1.16
+     A D=32 eps=1.0        random_pair    20.29     22.72   --   OK   OK    0.43   OK    1.09
+     A D=32 eps=inf              blind    20.29     22.01   --   OK   OK    0.40   OK    1.04
+     A D=32 eps=inf  contrastive-gated    20.29     18.68   OK   OK   --    0.21   OK    1.17
+     A D=32 eps=inf        random_pair    20.29     23.01   --   OK   OK    0.46   OK    1.10
+     A D=64 eps=1.0              blind    43.00     92.76   --   OK   --    0.22   OK    1.15
+     A D=64 eps=1.0  contrastive-gated    43.00     89.20   --   OK   --    0.20   OK    1.24
+     A D=64 eps=1.0        random_pair    43.00     92.97   --   OK   OK    0.34   OK    1.19
+     A D=64 eps=inf              blind    43.00     93.28   --   OK   --    0.28   OK    1.16
+     A D=64 eps=inf  contrastive-gated    43.00     88.82   --   OK   --    0.20   OK    1.22
+     A D=64 eps=inf        random_pair    43.00     93.72   --   OK   OK    0.37   OK    1.19
+    A D=128 eps=1.0              blind    98.92    288.82   --   OK   --    0.19   OK    1.22
+    A D=128 eps=1.0  contrastive-gated    98.92    291.43   --   OK   --    0.19   OK    1.36
+    A D=128 eps=1.0        random_pair    98.92    288.69   --   OK   --    0.25   OK    1.34
+    A D=128 eps=inf              blind    98.92    286.10   --   OK   --    0.16   OK    1.22
+    A D=128 eps=inf  contrastive-gated    98.92    292.11   --   OK   --    0.16   OK    1.35
+    A D=128 eps=inf        random_pair    98.92    289.17   --   OK   --    0.28   OK    1.33
+    B D=128 eps=1.0              blind    19.80     59.87   --   --   OK    0.39   OK    0.88
+    B D=128 eps=1.0  contrastive-gated    20.37     65.20   --   --   OK    0.35   OK    0.86
+    B D=128 eps=1.0        random_pair    20.25     66.23   --   --   --    0.31   OK    0.87
+    B D=128 eps=inf              blind    20.25     70.19   --   --   --    0.23   OK    0.83
+    B D=128 eps=inf  contrastive-gated    20.25     63.91   --   --   OK    0.37   OK    0.86
+    B D=128 eps=inf        random_pair    20.25     68.05   --   --   --    0.31   OK    0.85
+
+   healthy, spec 9.0 read literally (every arm): NONE
+   healthy, controls only (harness soundness) : [('A', 2, 1.0), ('A', 2, inf), ('A', 8, 1.0), ('A', 8, inf)]
+
+   The two readings differ only through condition 3 (n_eff/n_syn > 0.3), which at
+   D=2 and D=8 is failed by `contrastive-gated` alone: the directed step contracts
+   the population and sharpens the vote histogram.  That contraction is the
+   behaviour Q2' exists to measure, not a harness defect to be fixed, so cells are
+   certified on the control arms and the method's n_eff is reported as a result.
+   D>=32 and config B fail on the CONTROLS too, and are genuinely unusable.
+
+========================================================================================================
+STAGE 2 -- Q2': does the consensus content matter?
+    Gate (spec 9.1): contrastive beats random_pair on FD *and* metric 7,
+    by > 1 seed-s.d., on 7 of 10 seeds.  Must also beat centroid.
+========================================================================================================
+
+-- config A, D=2, eps=1, theta=0 --
+                    arm         final FD         coverage         m7 ratio        n_eff/n
+                  blind   0.0257±0.0113    0.280±0.012    0.214±0.098   0.51±0.01
+            random_pair   0.0329±0.0204    0.275±0.008    0.190±0.048   0.53±0.02
+               centroid   0.0225±0.0148    0.281±0.015    0.741±0.170   0.28±0.01
+     contrastive-always   0.0451±0.0331    0.281±0.008    0.687±0.123   0.29±0.01
+      contrastive-gated   0.0278±0.0177    0.278±0.012    0.640±0.135   0.31±0.02
+   contrastive-always vs random_pair: FD wins 4/10 (margin -0.0122, pass=False) | m7 wins 10/10 (margin +0.4969, pass=True)
+   contrastive-always vs centroid: FD wins 4/10 (margin -0.0225, pass=False) | m7 wins 4/10 (margin -0.0544, pass=False)
+   contrastive-gated vs random_pair: FD wins 8/10 (margin +0.0051, pass=False) | m7 wins 10/10 (margin +0.4497, pass=True)
+   contrastive-gated vs centroid: FD wins 3/10 (margin -0.0052, pass=False) | m7 wins 2/10 (margin -0.1016, pass=False)
+
+-- config A, D=8, eps=1, theta=0 --
+                    arm         final FD         coverage         m7 ratio        n_eff/n
+                  blind   0.5222±0.0802    0.206±0.020    0.170±0.125   0.55±0.02
+            random_pair   0.5254±0.0845    0.194±0.013    0.297±0.094   0.53±0.02
+               centroid   0.5202±0.0484    0.175±0.017    0.586±0.085   0.30±0.01
+     contrastive-always   0.4553±0.0874    0.167±0.019    0.661±0.111   0.29±0.01
+      contrastive-gated   0.4671±0.0846    0.167±0.016    0.609±0.142   0.30±0.01
+   contrastive-always vs random_pair: FD wins 8/10 (margin +0.0701, pass=False) | m7 wins 10/10 (margin +0.3642, pass=True)
+   contrastive-always vs centroid: FD wins 9/10 (margin +0.0649, pass=False) | m7 wins 8/10 (margin +0.0752, pass=False)
+   contrastive-gated vs random_pair: FD wins 8/10 (margin +0.0583, pass=False) | m7 wins 10/10 (margin +0.3128, pass=True)
+   contrastive-gated vs centroid: FD wins 8/10 (margin +0.0531, pass=False) | m7 wins 6/10 (margin +0.0238, pass=False)
+
+   Q2' VERDICT: FAIL -- consensus content adds nothing
+   per cell: {(2, 'contrastive-always'): False, (2, 'contrastive-gated'): False, (8, 'contrastive-always'): False, (8, 'contrastive-gated'): False}
+
+========================================================================================================
+STAGE 3 -- Q1 (does directed beat blind at theta=0) and Q3 (oracle -> contrastive).
+    Q1 pass (spec 9.1): reach blind's final FD in <= 0.75T = 7 rounds on 7 of 10 seeds.
+========================================================================================================
+
+-- config A, D=2, eps=1 --
+                    arm         final FD   rounds->blind FD  seeds<=7         m7 ratio
+                  blind   0.0257±0.0113      1.60±0.52     10/10    0.214±0.098
+            random_pair   0.0329±0.0204      1.67±0.71      9/10    0.190±0.048
+     contrastive-always   0.0451±0.0331      1.67±0.71      9/10    0.687±0.123
+      contrastive-gated   0.0278±0.0177      2.44±2.88      8/10    0.640±0.135
+          oracle-always   0.0246±0.0141      2.22±1.64      9/10    0.703±0.131
+           oracle-gated   0.0296±0.0107      1.67±0.71      9/10    0.679±0.105
+           truth-always   0.0375±0.0223      1.67±0.71      9/10    0.698±0.082
+   (blind's own rounds-to-its-own-final-FD:   1.60±0.52 -- the bar the
+    spec rule sets is satisfied by blind itself, so 'beats blind' is the real test)
+
+-- config A, D=8, eps=1 --
+                    arm         final FD   rounds->blind FD  seeds<=7         m7 ratio
+                  blind   0.5222±0.0802      1.10±0.32     10/10    0.170±0.125
+            random_pair   0.5254±0.0845      1.10±0.32     10/10    0.297±0.094
+     contrastive-always   0.4553±0.0874      1.00±0.00     10/10    0.661±0.111
+      contrastive-gated   0.4671±0.0846      1.00±0.00     10/10    0.609±0.142
+          oracle-always   0.4712±0.0527      1.00±0.00     10/10    0.591±0.064
+           oracle-gated   0.4996±0.1073      1.00±0.00     10/10    0.570±0.113
+   (blind's own rounds-to-its-own-final-FD:   1.10±0.32 -- the bar the
+    spec rule sets is satisfied by blind itself, so 'beats blind' is the real test)
+
+   Q3 -- share of the oracle's gain retained by the contrastive rendering:
+   D=2: FD gain oracle +0.0010, contrastive -0.0194 -> retained -18.94
+        speed gain oracle -0.62 rounds, contrastive -0.07 -> retained 0.11
+   D=8: FD gain oracle +0.0509, contrastive +0.0668 -> retained 1.31
+        speed gain oracle +0.10 rounds, contrastive +0.10 -> retained 1.00
+
+========================================================================================================
+STAGE 4a -- Q2: is the gate worth keeping?
+    Keep (spec 9.1): gated beats always by > 1 seed-s.d. at eps <= 1, AND the same
+    margin does NOT appear between random_pair-gated and random_pair-always
+    (which would make gating a generic contraction regulariser, not a consensus test).
+========================================================================================================
+   D=2  contrastive: always   0.0451±0.0331  gated   0.0278±0.0177  gated wins 6/10 margin +0.0173 pass=False  reject 0.645±0.066
+   D=2  random_pair: always   0.0329±0.0204  gated   0.0250±0.0120  gated wins 7/10 margin +0.0079 pass=False  reject 0.636±0.027
+   D=8  contrastive: always   0.4553±0.0874  gated   0.4671±0.0846  gated wins 4/10 margin -0.0118 pass=False  reject 0.629±0.051
+   D=8  random_pair: always   0.5254±0.0845  gated   0.5123±0.0973  gated wins 6/10 margin +0.0131 pass=False  reject 0.857±0.030
+
+   Gate reject rate by t=0 vote quintile (is it a density filter rather than
+   a consensus test?  spec 5):
+   D=2: Q1=0.653  Q2=0.661  Q3=0.629  Q4=0.637  Q5=0.645
+   D=8: Q1=0.641  Q2=0.615  Q3=0.646  Q4=0.629  Q5=0.612
+
+   FPR / power vs eps (and spec 4.2 variant (a) vs (b) at eps=inf):
+     D   eps  variant   sigma             FPR           power          reject
+     2   0.5        b   21.81  0.169±0.088  0.533±0.050  0.480±0.056
+     2   1.0        b   11.62  0.204±0.129  0.681±0.064  0.645±0.066
+     2   1.0        a   11.62  0.141±0.104  0.697±0.042  0.664±0.043
+     2   4.0        b    3.40  0.093±0.069  0.787±0.044  0.757±0.048
+     2   inf        b    0.00  0.180±0.249  0.761±0.066  0.752±0.064
+     2   inf        a    0.00    n/a    n/a  0.844±0.059
+     8   0.5        b   21.81  0.082±0.070  0.518±0.059  0.450±0.046
+     8   1.0        b   11.62  0.113±0.097  0.673±0.048  0.629±0.051
+     8   1.0        a   11.62  0.152±0.102  0.687±0.066  0.649±0.053
+     8   4.0        b    3.40  0.223±0.250  0.776±0.053  0.748±0.048
+     8   inf        b    0.00  0.185±0.111  0.785±0.054  0.758±0.046
+     8   inf        a    0.00    n/a    n/a  0.897±0.021
+
+========================================================================================================
+STAGE 4b -- Q4: minimum axis fidelity theta*.
+    Reported only if FD-vs-theta is monotone over >= 3 consecutive theta with
+    total range > 2 seed-s.d.; otherwise 'insensitive to theta' (evidence for D3).
+========================================================================================================
+
+-- D=2 contrastive-always --
+     theta   measured         final FD
+        0d       nand   0.0451±0.0331
+       15d       nand   0.0282±0.0221
+       30d       nand   0.0289±0.0122
+       45d       nand   0.0225±0.0100
+       60d       nand   0.0385±0.0200
+       90d       nand   0.0360±0.0126
+   range 0.0226 vs 2 seed-s.d. 0.0367; monotone=False
+   -> INSENSITIVE to theta (supports D3)
+
+-- D=2 contrastive-gated --
+     theta   measured         final FD
+        0d       nand   0.0278±0.0177
+       15d       nand   0.0294±0.0122
+       30d      30.1d   0.0283±0.0130
+       45d      44.9d   0.0244±0.0110
+       60d      60.0d   0.0283±0.0108
+       90d      90.0d   0.0262±0.0099
+   range 0.0050 vs 2 seed-s.d. 0.0249; monotone=False
+   -> INSENSITIVE to theta (supports D3)
+
+-- D=2 random_pair --
+     theta   measured         final FD
+        0d       2.5d   0.0329±0.0204
+       15d      14.9d   0.0231±0.0130
+       30d      30.0d   0.0310±0.0179
+       45d      45.0d   0.0280±0.0231
+       60d      60.1d   0.0246±0.0102
+       90d      90.0d   0.0338±0.0182
+   range 0.0107 vs 2 seed-s.d. 0.0342; monotone=False
+   -> INSENSITIVE to theta (supports D3)
+
+-- D=8 contrastive-always --
+     theta   measured         final FD
+        0d       nand   0.4553±0.0874
+       15d       nand   0.4460±0.0916
+       30d      30.2d   0.5149±0.0810
+       45d      45.2d   0.5329±0.0815
+       60d      60.1d   0.5694±0.1164
+       90d      90.0d   0.5413±0.1090
+   range 0.1234 vs 2 seed-s.d. 0.1890; monotone=False
+   -> INSENSITIVE to theta (supports D3)
+
+-- D=8 contrastive-gated --
+     theta   measured         final FD
+        0d       nand   0.4671±0.0846
+       15d       nand   0.4540±0.0672
+       30d      30.3d   0.5213±0.1134
+       45d      45.1d   0.5395±0.0991
+       60d      60.1d   0.5509±0.1247
+       90d      89.9d   0.5720±0.1274
+   range 0.1180 vs 2 seed-s.d. 0.2055; monotone=False
+   -> INSENSITIVE to theta (supports D3)
+
+-- D=8 random_pair --
+     theta   measured         final FD
+        0d       3.9d   0.5254±0.0845
+       15d      15.5d   0.5016±0.0903
+       30d      30.3d   0.5570±0.0862
+       45d      45.1d   0.5702±0.1236
+       60d      60.1d   0.5458±0.0938
+       90d      90.0d   0.5729±0.1108
+   range 0.0713 vs 2 seed-s.d. 0.1964; monotone=False
+   -> INSENSITIVE to theta (supports D3)
+
+========================================================================================================
+STAGE 4c -- Q5: does the benefit concentrate in low-vote regions?
+    Pass (spec 9.1): relative coverage gain over RANDOM_PAIR larger in the bottom
+    vote quintile than in the top, in a healthy cell.
+========================================================================================================
+
+-- D=2 contrastive-always vs random_pair --
+    quintile   random_pair           arm   rel gain
+          Q1         0.266         0.269     +0.010
+          Q2         0.263         0.280     +0.067
+          Q3         0.270         0.277     +0.027
+          Q4         0.301         0.295     -0.019
+          Q5         0.277         0.284     +0.026
+   bottom +0.010 vs top +0.026 -> Q5 FAIL
+
+-- D=2 contrastive-gated vs random_pair --
+    quintile   random_pair           arm   rel gain
+          Q1         0.266         0.257     -0.034
+          Q2         0.263         0.281     +0.069
+          Q3         0.270         0.285     +0.056
+          Q4         0.301         0.298     -0.011
+          Q5         0.277         0.270     -0.024
+   bottom -0.034 vs top -0.024 -> Q5 FAIL
+
+-- D=8 contrastive-always vs random_pair --
+    quintile   random_pair           arm   rel gain
+          Q1         0.079         0.080     +0.013
+          Q2         0.138         0.183     +0.322
+          Q3         0.221         0.223     +0.009
+          Q4         0.267         0.198     -0.258
+          Q5         0.267         0.154     -0.424
+   bottom +0.013 vs top -0.424 -> Q5 PASS
+
+-- D=8 contrastive-gated vs random_pair --
+    quintile   random_pair           arm   rel gain
+          Q1         0.079         0.083     +0.054
+          Q2         0.138         0.183     +0.320
+          Q3         0.221         0.223     +0.012
+          Q4         0.267         0.194     -0.275
+          Q5         0.267         0.153     -0.427
+   bottom +0.054 vs top -0.427 -> Q5 PASS
+
+========================================================================================================
+STAGE 5 -- config B (real sentence embeddings).  The health gate REJECTS every
+    config B cell (FD_T > FD_0 for the controls), so these are reported for the
+    record only and are not evidence for or against any question.
+========================================================================================================
+
+-- D=128, eps=1.0 (sigma=11.62) --
+   FD_0 19.80, real-sample floor 7.58
+                    arm         final FD        coverage       precision        m7 ratio
+                  blind    69.02±6.51   0.007±0.001   0.467±0.082     n/a
+            random_pair    66.23±3.31   0.006±0.001   0.403±0.095   0.349±0.073
+               centroid    62.95±3.91   0.147±0.013   1.000±0.000     n/a

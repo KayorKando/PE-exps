@@ -1,0 +1,517 @@
+loaded 566 runs
+
+====================================================================================================
+PIPELINE HEALTH -- shared by every arm, so it confounds all comparisons if broken
+====================================================================================================
+                           cell   FD t=0    FD t=T  FD floor  n_eff/n_syn  uniq par
+                  A D=2 eps=0.5     1.02      0.13      0.01         0.37      0.40   OK
+                  A D=2 eps=1.0     1.02      0.05      0.01         0.42      0.43   OK
+                  A D=2 eps=4.0     1.02      0.02      0.01         0.56      0.52   OK
+                  A D=2 eps=inf     1.02      0.03      0.01         0.68      0.57   OK
+                A D=128 eps=0.5    98.86    231.83     12.42         0.23      0.36   DEGRADES
+                A D=128 eps=1.0    98.86    228.53     12.42         0.16      0.35   DEGRADES
+                A D=128 eps=4.0    98.86    220.11     12.42         0.12      0.34   DEGRADES
+                A D=128 eps=inf    98.86    211.91     12.42         0.09      0.25   DEGRADES
+                B D=128 eps=1.0    23.72     94.10      5.94         0.37      0.41   DEGRADES
+                B D=128 eps=inf    23.72     80.66      5.94         0.49      0.49   DEGRADES
+                B D=768 eps=1.0   395.20   1582.53    187.37         0.39      0.42   DEGRADES
+                B D=768 eps=inf   395.20   1377.74    187.37         0.44      0.48   DEGRADES
+
+====================================================================================================
+CONFIG B -- real sentence-encoder embeddings (Yelp / all-mpnet-base-v2, PCA to D).
+This is the geometry the LLM stage will actually see.  Transferable metrics only
+(no ground-truth density), reference = the private set itself (spec 7).
+====================================================================================================
+
+-- D=128, eps=1.0 (sigma=9.78, rho=0.2) --
+   FD at t=0: 23.94   real-sample floor: 5.85
+   !! blind ends worse than Z_0 -- queries-to-target is void here
+   arm                           final FD       coverage      precision  n_eff/n_syn
+   blind                    94.10±3.50  0.097±0.033  0.776±0.084   0.37±0.03
+   contrastive-always      103.87±4.32  0.423±0.021  0.994±0.008   0.37±0.03
+   contrastive-gated        89.74±4.10  0.361±0.047  0.982±0.012   0.36±0.02
+   oracle-always           100.28±5.28  0.323±0.035  0.987±0.020   0.37±0.02
+
+-- D=128, eps=inf (sigma=0.00, rho=0.02) --
+   FD at t=0: 25.63   real-sample floor: 6.01
+   !! blind ends worse than Z_0 -- queries-to-target is void here
+   arm                           final FD       coverage      precision  n_eff/n_syn
+   blind                    80.66±1.43  0.149±0.016  0.940±0.018   0.49±0.02
+   contrastive-always       75.69±3.18  0.213±0.015  0.980±0.012   0.42±0.02
+   contrastive-gated        75.69±3.18  0.213±0.015  0.980±0.012   0.42±0.02
+   oracle-always            76.23±3.02  0.201±0.019  0.973±0.017   0.42±0.01
+
+-- D=768, eps=1.0 (sigma=9.78, rho=0.08) --
+   FD at t=0: 409.53   real-sample floor: 186.61
+   !! blind ends worse than Z_0 -- queries-to-target is void here
+   arm                           final FD       coverage      precision  n_eff/n_syn
+   blind                  1582.53±26.36  0.077±0.009  0.824±0.042   0.39±0.02
+   contrastive-always     1486.81±10.41  0.244±0.014  0.972±0.041   0.36±0.03
+   contrastive-gated      1567.97±31.49  0.158±0.025  0.952±0.017   0.36±0.02
+   oracle-always          1509.51±31.09  0.192±0.012  0.969±0.020   0.36±0.02
+
+-- D=768, eps=inf (sigma=0.00, rho=0.02) --
+   FD at t=0: 409.53   real-sample floor: 186.61
+   !! blind ends worse than Z_0 -- queries-to-target is void here
+   arm                           final FD       coverage      precision  n_eff/n_syn
+   blind                  1377.74±17.23  0.097±0.013  0.842±0.054   0.44±0.01
+   contrastive-always     1321.50±23.38  0.151±0.013  0.938±0.026   0.38±0.03
+   contrastive-gated      1321.50±23.38  0.151±0.013  0.938±0.026   0.38±0.03
+   oracle-always          1334.97±15.14  0.144±0.007  0.920±0.036   0.36±0.02
+
+====================================================================================================
+Q1  Does directed variation beat blind when the generator follows the axis perfectly (theta=0)?
+    Pass rule (spec 9): reach blind's final Frechet distance in <= 0.75T = 7 rounds, on 4 of 5 seeds.
+====================================================================================================
+
+-- config A, D=128, eps=1.0   (sigma=9.78, vote SNR=0.41) --
+   Frechet floor for a real sample of the same size: 12.49
+   arm                           final FD   final coverage  rounds->blind FD  seeds pass  beats blind?
+   !! blind ends WORSE than Z_0, so 'queries-to-target' is
+      vacuous in this cell (Z_0 already beats the target) and
+      the Q1 decision rule cannot be evaluated here.
+   blind                   228.53±4.72    0.000±0.000        1.0±0.0        void             -
+   contrastive-always      197.01±6.33    0.005±0.007        1.0±0.0        void          void
+   contrastive-gated       176.93±6.59    0.004±0.002        1.0±0.0        void          void
+   oracle-always           207.68±4.49    0.001±0.001        1.0±0.0        void          void
+   oracle-gated            189.84±4.83    0.001±0.001        1.0±0.0        void          void
+   truth-always            112.40±1.54    1.000±0.000        1.0±0.0        void          void
+
+-- config A, D=128, eps=inf   (sigma=0.00, vote SNR=inf) --
+   Frechet floor for a real sample of the same size: 12.49
+   arm                           final FD   final coverage  rounds->blind FD  seeds pass  beats blind?
+   !! blind ends WORSE than Z_0, so 'queries-to-target' is
+      vacuous in this cell (Z_0 already beats the target) and
+      the Q1 decision rule cannot be evaluated here.
+   blind                   211.91±14.56    0.000±0.000        1.0±0.0        void             -
+   contrastive-always      222.15±11.24    0.002±0.001        6.0±4.4        void          void
+   contrastive-gated       222.15±11.24    0.002±0.001        6.0±4.4        void          void
+   oracle-always           195.15±11.91    0.009±0.011        6.8±3.5        void          void
+   oracle-gated            195.15±11.91    0.009±0.011        6.8±3.5        void          void
+   truth-always            115.90±1.51    1.000±0.000        1.0±0.0        void          void
+
+-- config A, D=2, eps=1.0   (sigma=9.78, vote SNR=0.41) --
+   Frechet floor for a real sample of the same size: 0.01
+   arm                           final FD   final coverage  rounds->blind FD  seeds pass  beats blind?
+   blind                     0.05±0.01    0.471±0.029        6.2±1.9         4/5             -
+   contrastive-always        0.09±0.03    0.280±0.018        6.3±3.1         2/5            no
+   contrastive-gated         0.05±0.01    0.460±0.020        5.8±2.6         4/5            no
+   oracle-always             0.09±0.08    0.271±0.013        3.2±1.3         4/5           yes
+   oracle-gated              0.08±0.05    0.455±0.020        3.4±0.9         5/5           yes
+   truth-always              0.07±0.03    0.371±0.014        3.8±1.9         5/5           yes
+
+-- config A, D=2, eps=inf   (sigma=0.00, vote SNR=inf) --
+   Frechet floor for a real sample of the same size: 0.01
+   arm                           final FD   final coverage  rounds->blind FD  seeds pass  beats blind?
+   blind                     0.03±0.03    0.642±0.009        4.2±2.8         4/5             -
+   contrastive-always        0.04±0.03    0.421±0.014        2.5±1.9         4/5            no
+   contrastive-gated         0.04±0.03    0.421±0.014        2.5±1.9         4/5            no
+   oracle-always             0.04±0.03    0.426±0.029        2.8±2.1         4/5            no
+   oracle-gated              0.04±0.03    0.426±0.029        2.8±2.1         4/5            no
+   truth-always              0.05±0.02    0.513±0.018        1.3±0.6         3/5           yes
+
+   Q1 verdict, config A D=128 eps=1 (the spec's read-off cell): VOID -- the shared loop degrades, see PIPELINE HEALTH
+   Q1 verdict, config A D=2   eps=1 (the only healthy cell):     FAIL
+
+====================================================================================================
+Q2  Does gating add anything over always-directed?
+    Keep rule (spec 9): gated beats always by > 1 seed-s.d. on Frechet or low-vote recall, eps <= 1.
+====================================================================================================
+
+-- D=128 eps=0.5 contrastive --
+   FD  always  200.98±13.14   gated  185.90±12.82   gated better by >1sd: True
+   bottom-quintile coverage  always 0.006  gated 0.003   gated better: False
+   gate: reject rate  0.189±0.038  FPR  0.050±0.044  power  0.402±0.097
+
+-- D=128 eps=1.0 contrastive --
+   FD  always  197.01±6.33   gated  176.93±6.59   gated better by >1sd: True
+   bottom-quintile coverage  always 0.001  gated 0.002   gated better: False
+   gate: reject rate  0.359±0.087  FPR  0.060±0.041  power  0.537±0.084
+
+-- D=128 eps=1.0 oracle --
+   FD  always  207.68±4.49   gated  189.84±4.83   gated better by >1sd: True
+   bottom-quintile coverage  always 0.001  gated 0.000   gated better: False
+   gate: reject rate  0.340±0.031  FPR  0.048±0.038  power  0.497±0.037
+
+-- D=2 eps=0.5 contrastive --
+   FD  always    0.16±0.08   gated    0.12±0.05   gated better by >1sd: False
+   bottom-quintile coverage  always 0.182  gated 0.287   gated better: True
+   gate: reject rate  0.060±0.018  FPR  0.054±0.021  power  0.220±0.128
+
+-- D=2 eps=1.0 contrastive --
+   FD  always    0.09±0.03   gated    0.05±0.01   gated better by >1sd: True
+   bottom-quintile coverage  always 0.254  gated 0.389   gated better: True
+   gate: reject rate  0.086±0.012  FPR  0.072±0.018  power  0.200±0.041
+
+-- D=2 eps=1.0 oracle --
+   FD  always    0.09±0.08   gated    0.08±0.05   gated better by >1sd: False
+   bottom-quintile coverage  always 0.216  gated 0.380   gated better: True
+   gate: reject rate  0.072±0.018  FPR  0.067±0.024  power  0.121±0.104
+
+   Q2 verdict: KEEP the test
+
+====================================================================================================
+Q3  How much of the oracle-directed gain survives the contrastive-pair rendering?
+    Reported on both axes: final Frechet distance, and the headline efficiency axis
+    (rounds to reach blind's final FD).  The retained fraction is only meaningful
+    when the oracle actually gains, so it is suppressed otherwise.
+====================================================================================================
+
+-- D=128 eps=1.0 --
+   arm              final FD   FD gain   rounds  rounds saved
+   blind             228.529         -     1.00             -
+   oracle            207.678   +20.852     1.00         +0.00
+   contrastive       197.007   +31.523     1.00         +0.00
+   truth             112.404  +116.126     1.00         +0.00
+   (rounds column void here: blind ends worse than Z_0)
+   FD-gain retained by the contrastive rendering: 1.51
+   mean cos(g_hat, grad log p/q) at T:  0.072±0.011  (metric 5 -- how informative the vote consensus direction is)
+
+-- D=128 eps=inf --
+   arm              final FD   FD gain   rounds  rounds saved
+   blind             211.910         -     1.00             -
+   oracle            195.148   +16.761     6.80         -5.80
+   contrastive       222.154   -10.244     6.00         -5.00
+   truth             115.897   +96.013     1.00         +0.00
+   (rounds column void here: blind ends worse than Z_0)
+   FD-gain retained by the contrastive rendering: -0.61
+   mean cos(g_hat, grad log p/q) at T:  0.132±0.009  (metric 5 -- how informative the vote consensus direction is)
+
+-- D=2 eps=1.0 --
+   arm              final FD   FD gain   rounds  rounds saved
+   blind               0.048         -     6.20             -
+   oracle              0.087    -0.039     3.25         +2.95
+   contrastive         0.085    -0.037     6.33         -0.13
+   truth               0.071    -0.023     3.80         +2.40
+   FD-gain retained: n/a (oracle does not beat blind on final FD here)
+   speed-gain retained by the contrastive rendering: -0.05
+   mean cos(g_hat, grad log p/q) at T:  0.049±0.042  (metric 5 -- how informative the vote consensus direction is)
+
+-- D=2 eps=inf --
+   arm              final FD   FD gain   rounds  rounds saved
+   blind               0.026         -     4.20             -
+   oracle              0.041    -0.015     2.75         +1.45
+   contrastive         0.039    -0.013     2.50         +1.70
+   truth               0.047    -0.020     1.33         +2.87
+   FD-gain retained: n/a (oracle does not beat blind on final FD here)
+   speed-gain retained by the contrastive rendering: 1.17
+   mean cos(g_hat, grad log p/q) at T:  0.163±0.045  (metric 5 -- how informative the vote consensus direction is)
+
+====================================================================================================
+Q4  Minimum axis fidelity theta* at which directed still beats blind.
+====================================================================================================
+
+-- D=128 contrastive-always (eps=1) --
+    theta  measured        final FD   rounds->blind  seeds pass
+       0d      5.7d  197.01±6.33       1.0±0.0        5/5
+      15d     16.0d  183.28±8.02       1.0±0.0        5/5
+      30d     30.5d  175.03±5.85       1.0±0.0        5/5
+      45d     45.3d  174.51±15.26       1.0±0.0        5/5
+      60d     60.2d  184.30±8.86       1.0±0.0        5/5
+      90d     90.0d  229.41±2.66       1.0±0.0        5/5
+   (void: blind ends worse than Z_0 in this cell)
+
+-- D=128 contrastive-gated (eps=1) --
+    theta  measured        final FD   rounds->blind  seeds pass
+       0d      5.7d  176.93±6.59       1.0±0.0        5/5
+      15d     16.0d  176.48±7.63       1.0±0.0        5/5
+      30d     30.5d  178.37±9.82       1.0±0.0        5/5
+      45d     45.3d  179.26±11.22       1.0±0.0        5/5
+      60d     60.2d  183.76±16.93       1.0±0.0        5/5
+      90d     90.0d  222.25±7.32       1.0±0.0        5/5
+   (void: blind ends worse than Z_0 in this cell)
+
+-- D=128 oracle-always (eps=1) --
+    theta  measured        final FD   rounds->blind  seeds pass
+       0d      5.7d  207.68±4.49       1.0±0.0        5/5
+      15d     16.0d  206.64±7.41       1.0±0.0        5/5
+      30d     30.5d  199.18±14.02       1.0±0.0        5/5
+      45d     45.3d  189.58±6.81       1.0±0.0        5/5
+      60d     60.2d  190.98±9.95       1.0±0.0        5/5
+      90d     90.0d  229.12±9.39       1.0±0.0        5/5
+   (void: blind ends worse than Z_0 in this cell)
+
+-- D=2 contrastive-always (eps=1) --
+    theta  measured        final FD   rounds->blind  seeds pass
+       0d      2.8d    0.09±0.03       6.3±3.1        2/5
+      15d     15.1d    0.08±0.06       6.4±2.9        3/5
+      30d     30.1d    0.07±0.03       5.0±2.5        4/5
+      45d     45.0d    0.06±0.03       4.2±1.3        4/5
+      60d     60.0d    0.05±0.04       6.8±0.4        5/5
+      90d     90.0d    0.05±0.03       4.8±2.5        3/5
+   theta* (largest theta still passing Q1) = 60 deg
+
+-- D=2 contrastive-gated (eps=1) --
+    theta  measured        final FD   rounds->blind  seeds pass
+       0d      3.0d    0.05±0.01       5.8±2.6        4/5
+      15d     15.0d    0.08±0.08       5.2±3.0        3/5
+      30d     30.1d    0.03±0.02       6.0±1.9        4/5
+      45d     44.6d    0.07±0.04       3.6±1.1        5/5
+      60d     59.6d    0.10±0.06       4.6±2.3        5/5
+      90d     89.8d    0.06±0.03       5.2±3.4        3/5
+   theta* (largest theta still passing Q1) = 60 deg
+
+-- D=2 oracle-always (eps=1) --
+    theta  measured        final FD   rounds->blind  seeds pass
+       0d      2.7d    0.09±0.08       3.2±1.3        4/5
+      15d     15.0d    0.10±0.05       4.8±2.2        4/5
+      30d     30.0d    0.03±0.01       4.6±1.9        4/5
+      45d     44.9d    0.10±0.03       4.5±1.3        4/5
+      60d     59.9d    0.05±0.03       4.6±3.2        4/5
+      90d     89.9d    0.04±0.01       5.0±3.4        3/5
+   theta* (largest theta still passing Q1) = 60 deg
+
+====================================================================================================
+SWEEPS (spec 8.3): eps, k, alpha on the gated contrastive arm, blind for reference.
+====================================================================================================
+
+-- config A, D=2 --
+              sweep        blind FD    contr-always     contr-gated   reject rate
+            eps=0.5    0.13±0.12    0.16±0.08    0.12±0.05  0.060±0.018   (sigma=17.93)
+            eps=1.0    0.05±0.01    0.09±0.03    0.05±0.01  0.086±0.012   (sigma=9.78)
+            eps=4.0    0.02±0.02    0.04±0.03    0.03±0.01  0.288±0.029   (sigma=2.99)
+                k=5                                    0.08±0.06  0.075±0.027   (FPR 0.070, power 0.176)
+               k=10                                    0.05±0.01  0.086±0.012   (FPR 0.072, power 0.200)
+               k=20                                    0.06±0.02  0.128±0.039   (FPR 0.095, power 0.268)
+         alpha=0.01                                    0.05±0.04  0.018±0.009   (FPR 0.013, nominal 0.01)
+         alpha=0.05                                    0.05±0.01  0.086±0.012   (FPR 0.072, nominal 0.05)
+          alpha=0.2                                    0.07±0.02  0.261±0.051   (FPR 0.236, nominal 0.2)
+
+-- config A, D=128 --
+              sweep        blind FD    contr-always     contr-gated   reject rate
+            eps=0.5  231.83±3.83  200.98±13.14  185.90±12.82  0.189±0.038   (sigma=17.93)
+            eps=1.0  228.53±4.72  197.01±6.33  176.93±6.59  0.359±0.087   (sigma=9.78)
+            eps=4.0  220.11±13.02  195.29±2.72  191.37±4.67  0.618±0.108   (sigma=2.99)
+                k=5                                  194.84±12.26  0.220±0.049   (FPR 0.063, power 0.501)
+               k=10                                  176.93±6.59  0.359±0.087   (FPR 0.060, power 0.537)
+               k=20                                  169.52±14.26  0.394±0.014   (FPR 0.104, power 0.484)
+         alpha=0.01                                  187.75±11.37  0.233±0.094   (FPR 0.013, nominal 0.01)
+         alpha=0.05                                  176.93±6.59  0.359±0.087   (FPR 0.060, nominal 0.05)
+          alpha=0.2                                  179.66±7.88  0.457±0.084   (FPR 0.159, nominal 0.2)
+
+====================================================================================================
+Q5  Does the benefit concentrate in low-vote regions?
+    Pass rule (spec 9): relative gain in the bottom vote quintile > gain in the top quintile.
+    Read off coverage: the Kynkaanniemi recall estimator saturates at 1.0 for over-dispersed
+    populations, so per-quintile recall is reported but is not the decision statistic.
+====================================================================================================
+
+-- D=128 eps=1.0 contrastive-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.000        0.001       n/a |      0.894      0.134
+          Q2        0.000        0.003       n/a |      0.911      0.141
+          Q3        0.000        0.009       n/a |      0.933      0.150
+          Q4        0.001        0.009    +16.00 |      0.929      0.198
+          Q5        0.000        0.007       n/a |      0.919      0.218
+
+-- D=128 eps=1.0 contrastive-gated vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.000        0.002       n/a |      0.894      0.044
+          Q2        0.000        0.004       n/a |      0.911      0.050
+          Q3        0.000        0.005       n/a |      0.933      0.082
+          Q4        0.001        0.004     +7.00 |      0.929      0.068
+          Q5        0.000        0.004       n/a |      0.919      0.063
+
+-- D=128 eps=1.0 oracle-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.000        0.001       n/a |      0.894      0.241
+          Q2        0.000        0.001       n/a |      0.911      0.258
+          Q3        0.000        0.001       n/a |      0.933      0.265
+          Q4        0.001        0.000     -1.00 |      0.929      0.353
+          Q5        0.000        0.001       n/a |      0.919      0.330
+
+-- D=128 eps=inf contrastive-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.000        0.001       n/a |      0.441      0.029
+          Q2        0.000        0.002       n/a |      0.485      0.030
+          Q3        0.000        0.001       n/a |      0.499      0.027
+          Q4        0.001        0.002     +0.50 |      0.584      0.020
+          Q5        0.000        0.003       n/a |      0.539      0.053
+
+-- D=128 eps=inf contrastive-gated vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.000        0.001       n/a |      0.441      0.029
+          Q2        0.000        0.002       n/a |      0.485      0.030
+          Q3        0.000        0.001       n/a |      0.499      0.027
+          Q4        0.001        0.002     +0.50 |      0.584      0.020
+          Q5        0.000        0.004       n/a |      0.539      0.053
+
+-- D=128 eps=inf oracle-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.000        0.006       n/a |      0.441      0.045
+          Q2        0.000        0.008       n/a |      0.485      0.058
+          Q3        0.000        0.008       n/a |      0.499      0.069
+          Q4        0.001        0.008     +6.50 |      0.584      0.080
+          Q5        0.000        0.013       n/a |      0.539      0.113
+
+-- D=2 eps=1.0 contrastive-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.428        0.254     -0.41 |      0.748      0.542
+          Q2        0.489        0.269     -0.45 |      0.859      0.595
+          Q3        0.479        0.259     -0.46 |      0.847      0.617
+          Q4        0.451        0.315     -0.30 |      0.859      0.640
+          Q5        0.511        0.304     -0.41 |      0.856      0.636
+   bottom-quintile gain -0.41 vs top-quintile -0.41  -> Q5 FAIL
+
+-- D=2 eps=1.0 contrastive-gated vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.428        0.389     -0.09 |      0.748      0.770
+          Q2        0.489        0.446     -0.09 |      0.859      0.880
+          Q3        0.479        0.477     -0.00 |      0.847      0.849
+          Q4        0.451        0.465     +0.03 |      0.859      0.849
+          Q5        0.511        0.522     +0.02 |      0.856      0.866
+   bottom-quintile gain -0.09 vs top-quintile +0.02  -> Q5 FAIL
+
+-- D=2 eps=1.0 oracle-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.428        0.216     -0.50 |      0.748      0.502
+          Q2        0.489        0.268     -0.45 |      0.859      0.570
+          Q3        0.479        0.272     -0.43 |      0.847      0.532
+          Q4        0.451        0.292     -0.35 |      0.859      0.608
+          Q5        0.511        0.304     -0.40 |      0.856      0.576
+   bottom-quintile gain -0.50 vs top-quintile -0.40  -> Q5 FAIL
+
+-- D=2 eps=inf contrastive-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.614        0.412     -0.33 |      0.963      0.810
+          Q2        0.649        0.411     -0.37 |      0.988      0.862
+          Q3        0.636        0.428     -0.33 |      0.987      0.852
+          Q4        0.663        0.414     -0.37 |      0.991      0.873
+          Q5        0.649        0.439     -0.32 |      0.988      0.882
+   bottom-quintile gain -0.33 vs top-quintile -0.32  -> Q5 FAIL
+
+-- D=2 eps=inf contrastive-gated vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.614        0.412     -0.33 |      0.963      0.810
+          Q2        0.649        0.411     -0.37 |      0.988      0.862
+          Q3        0.636        0.428     -0.33 |      0.987      0.852
+          Q4        0.663        0.415     -0.37 |      0.991      0.873
+          Q5        0.649        0.439     -0.32 |      0.988      0.881
+   bottom-quintile gain -0.33 vs top-quintile -0.32  -> Q5 FAIL
+
+-- D=2 eps=inf oracle-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.614        0.379     -0.38 |      0.963      0.797
+          Q2        0.649        0.431     -0.34 |      0.988      0.880
+          Q3        0.636        0.442     -0.31 |      0.987      0.871
+          Q4        0.663        0.400     -0.40 |      0.991      0.876
+          Q5        0.649        0.476     -0.27 |      0.988      0.885
+   bottom-quintile gain -0.38 vs top-quintile -0.27  -> Q5 FAIL
+
+
+### Q5 repeated on config B (the realistic geometry) ###
+
+====================================================================================================
+Q5  Does the benefit concentrate in low-vote regions?
+    Pass rule (spec 9): relative gain in the bottom vote quintile > gain in the top quintile.
+    Read off coverage: the Kynkaanniemi recall estimator saturates at 1.0 for over-dispersed
+    populations, so per-quintile recall is reported but is not the decision statistic.
+====================================================================================================
+
+-- D=128 eps=1.0 contrastive-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.092        0.501     +4.42 |      0.074      0.000
+          Q2        0.079        0.471     +4.93 |      0.079      0.000
+          Q3        0.092        0.425     +3.59 |      0.097      0.000
+          Q4        0.081        0.395     +3.88 |      0.087      0.000
+          Q5        0.141        0.322     +1.30 |      0.043      0.000
+   bottom-quintile gain +4.42 vs top-quintile +1.30  -> Q5 PASS
+
+-- D=128 eps=1.0 contrastive-gated vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.092        0.407     +3.41 |      0.074      0.002
+          Q2        0.079        0.389     +3.89 |      0.079      0.001
+          Q3        0.092        0.368     +2.98 |      0.097      0.002
+          Q4        0.081        0.355     +3.38 |      0.087      0.008
+          Q5        0.141        0.288     +1.05 |      0.043      0.005
+   bottom-quintile gain +3.41 vs top-quintile +1.05  -> Q5 PASS
+
+-- D=128 eps=1.0 oracle-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.092        0.368     +2.98 |      0.074      0.000
+          Q2        0.079        0.354     +3.46 |      0.079      0.000
+          Q3        0.092        0.348     +2.77 |      0.097      0.000
+          Q4        0.081        0.292     +2.61 |      0.087      0.000
+          Q5        0.141        0.251     +0.79 |      0.043      0.000
+   bottom-quintile gain +2.98 vs top-quintile +0.79  -> Q5 PASS
+
+-- D=128 eps=inf contrastive-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.095        0.168     +0.78 |      0.068      0.015
+          Q2        0.133        0.239     +0.80 |      0.112      0.037
+          Q3        0.211        0.288     +0.36 |      0.118      0.032
+          Q4        0.173        0.231     +0.34 |      0.063      0.013
+          Q5        0.135        0.138     +0.02 |      0.035      0.011
+   bottom-quintile gain +0.78 vs top-quintile +0.02  -> Q5 PASS
+
+-- D=128 eps=inf contrastive-gated vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.095        0.168     +0.78 |      0.068      0.015
+          Q2        0.133        0.239     +0.80 |      0.112      0.037
+          Q3        0.211        0.288     +0.36 |      0.118      0.032
+          Q4        0.173        0.231     +0.34 |      0.063      0.013
+          Q5        0.135        0.138     +0.02 |      0.035      0.011
+   bottom-quintile gain +0.78 vs top-quintile +0.02  -> Q5 PASS
+
+-- D=128 eps=inf oracle-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.095        0.158     +0.67 |      0.068      0.015
+          Q2        0.133        0.210     +0.58 |      0.112      0.031
+          Q3        0.211        0.283     +0.34 |      0.118      0.015
+          Q4        0.173        0.218     +0.26 |      0.063      0.009
+          Q5        0.135        0.136     +0.01 |      0.035      0.003
+   bottom-quintile gain +0.67 vs top-quintile +0.01  -> Q5 PASS
+
+-- D=768 eps=1.0 contrastive-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.049        0.273     +4.62 |      0.075      0.004
+          Q2        0.053        0.257     +3.90 |      0.103      0.002
+          Q3        0.086        0.286     +2.33 |      0.111      0.002
+          Q4        0.084        0.210     +1.52 |      0.095      0.004
+          Q5        0.116        0.195     +0.69 |      0.038      0.000
+   bottom-quintile gain +4.62 vs top-quintile +0.69  -> Q5 PASS
+
+-- D=768 eps=1.0 contrastive-gated vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.049        0.158     +2.25 |      0.075      0.018
+          Q2        0.053        0.157     +1.98 |      0.103      0.022
+          Q3        0.086        0.174     +1.03 |      0.111      0.028
+          Q4        0.084        0.148     +0.77 |      0.095      0.019
+          Q5        0.116        0.154     +0.32 |      0.038      0.013
+   bottom-quintile gain +2.25 vs top-quintile +0.32  -> Q5 PASS
+
+-- D=768 eps=1.0 oracle-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.049        0.195     +3.03 |      0.075      0.006
+          Q2        0.053        0.189     +2.60 |      0.103      0.007
+          Q3        0.086        0.239     +1.78 |      0.111      0.005
+          Q4        0.084        0.170     +1.04 |      0.095      0.003
+          Q5        0.116        0.165     +0.43 |      0.038      0.001
+   bottom-quintile gain +3.03 vs top-quintile +0.43  -> Q5 PASS
+
+-- D=768 eps=inf contrastive-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.065        0.126     +0.95 |      0.113      0.032
+          Q2        0.086        0.153     +0.78 |      0.194      0.066
+          Q3        0.133        0.211     +0.59 |      0.173      0.027
+          Q4        0.090        0.138     +0.52 |      0.129      0.032
+          Q5        0.112        0.129     +0.15 |      0.059      0.033
+   bottom-quintile gain +0.95 vs top-quintile +0.15  -> Q5 PASS
+
+-- D=768 eps=inf contrastive-gated vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.065        0.126     +0.95 |      0.113      0.032
+          Q2        0.086        0.153     +0.78 |      0.194      0.066
+          Q3        0.133        0.211     +0.59 |      0.173      0.027
+          Q4        0.090        0.138     +0.52 |      0.129      0.032
+          Q5        0.112        0.129     +0.15 |      0.059      0.033
+   bottom-quintile gain +0.95 vs top-quintile +0.15  -> Q5 PASS
+
+-- D=768 eps=inf oracle-always vs blind --
+    quintile    blind cov      arm cov   rel gain |  blind rec    arm rec
+          Q1        0.065        0.108     +0.68 |      0.113      0.031
+          Q2        0.086        0.156     +0.81 |      0.194      0.071
+          Q3        0.133        0.197     +0.49 |      0.173      0.043
+          Q4        0.090        0.135     +0.49 |      0.129      0.042
+          Q5        0.112        0.122     +0.09 |      0.059      0.019
+   bottom-quintile gain +0.68 vs top-quintile +0.09  -> Q5 PASS

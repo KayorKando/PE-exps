@@ -1,0 +1,9 @@
+# 381 MB of corpus embeddings and PCA pools. Rebuilt in ~5 min by
+# colab notebook step 4, or locally by pe_toy.data.pca_pool / embed_corpus.
+.cache/
+
+# Built by make_bundle.sh for uploading to Colab
+pe_toy_bundle.zip
+
+__pycache__/
+*.pyc
